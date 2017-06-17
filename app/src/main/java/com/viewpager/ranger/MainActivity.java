@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.viewpager.ranger.pageTransformer.AlphaPageTransformer;
+
 /**
  * viewpager一屏显示多个页面
  * Android:clipChildren="false"--子view在绘制时不要裁切它的显示范围
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         //设置page间距
         vp.setPageMargin(20);
         vp.setOffscreenPageLimit(3);
+        vp.setPageTransformer(true, new AlphaPageTransformer());
 
         vp.setAdapter(new MyAdapter());
     }
