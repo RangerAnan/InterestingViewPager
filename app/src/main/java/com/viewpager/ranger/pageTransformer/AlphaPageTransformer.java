@@ -11,7 +11,7 @@ import android.view.View;
 
 public class AlphaPageTransformer implements ViewPager.PageTransformer {
 
-    private float mMinAlpha = 0.5f;
+    private float mMinAlpha = 0.8f;
 
     /**
      * 根据position来处理每一个view
@@ -23,7 +23,7 @@ public class AlphaPageTransformer implements ViewPager.PageTransformer {
     public void transformPage(View page, float position) {
         Log.i("AlphaPageTransformer", "--position:" + position);
         if (position < -1) {     //左边的page
-            page.setAlpha(mMinAlpha);
+            page.setAlpha(1);
 
         } else if (position <= 1) {  //区间 [-1,1]
 
@@ -32,14 +32,12 @@ public class AlphaPageTransformer implements ViewPager.PageTransformer {
                 page.setAlpha(factor);
 
             } else {            //页2向左滑时，position由1-->0
-                float  factor = mMinAlpha + (1 - mMinAlpha) * (1 - position);
+                float factor = mMinAlpha + (1 - mMinAlpha) * (1 - position);
                 page.setAlpha(factor);
             }
 
         } else {        //右边的page
-            page.setAlpha(mMinAlpha);
+            page.setAlpha(1);
         }
-
-
     }
 }
