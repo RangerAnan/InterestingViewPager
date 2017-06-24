@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         vp.setCurrentItem(6);
 
         vp.addOnPageChangeListener(this);
+
+        //
     }
 
 
@@ -104,7 +106,21 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     //如果当前item变化到倒数第二个时，将其设置成资源的第五个（同一个资源的切换）
                     vp.setCurrentItem(imgResources.length, false);
                 }
-                //bug:如果连续滑动2个item，跳过了item为1的时候，就会出现边界
+
+               /* else if (vp.getCurrentItem() == 2) {
+                    //bug:如果连续滑动2个item，跳过了item为1的时候，就会出现边界
+                    vp.setCurrentItem(imgResources.length + 2, false);
+
+                } else if (vp.getCurrentItem() == 3) {
+                    vp.setCurrentItem(imgResources.length + 3, false);
+
+                } else if (vp.getCurrentItem() == 4) {
+                    vp.setCurrentItem(imgResources.length + 4, false);
+
+                } else if (vp.getCurrentItem() == 5) {
+                    vp.setCurrentItem(imgResources.length, false);
+
+                }*/
 
                 Log.i("MainActivity", "--CurrentItem:" + vp.getCurrentItem());
                 break;
