@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         vp.addOnPageChangeListener(this);
 
         //
+        //test2
     }
 
 
