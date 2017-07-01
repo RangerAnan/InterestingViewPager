@@ -1,13 +1,15 @@
 package com.viewpager.ranger;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.viewpager.ranger.pageTransformer.AlphaPageTransformer;
@@ -16,32 +18,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * viewpager一屏显示多个页面
- * 1.Android:clipChildren="false"--子view在绘制时不要裁切它的显示范围
- * <p>
- * 2.设置滑动动画setPageTransformer
- * <p>
- * 3.无限轮播方案:将适配的view多配置两个，放在viewpager第一个与最后一个。滑动最后一个时，直接设置setCurrentItem切换到第一个。
- * <p>
+ * 一屏展示两个页面
  */
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class TestVpActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, View.OnTouchListener {
 
     private ViewPager vp;
     private List<ImageView> viewList;
     private int currentItem = 1;
 
     private int[] imgResources = {R.mipmap.a1, R.mipmap.a2, R.mipmap.a3, R.mipmap.a4, R.mipmap.a5};
+    private int marginLeft;
+    private float startX;
+    private float moveX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_testvp);
         vp = (ViewPager) findViewById(R.id.vp);
 
         //设置page间距
         vp.setPageMargin(20);
         vp.setOffscreenPageLimit(3);
         vp.setPageTransformer(false, new AlphaPageTransformer());
+
+        //动态设置viewpager的marginLeft
+        setViewpagerMargin();
 
         //设置子view
         viewList = new ArrayList<>();
@@ -50,10 +52,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         vp.setAdapter(new MyAdapter());
         vp.setCurrentItem(6);
 
+        //vp的滑动事件只能监听当前的item,这里就不适用了。
         vp.addOnPageChangeListener(this);
 
-    }
+        vp.setOnTouchListener(this);
 
+
+    }
 
     /**
      * 由于一屏显示多个页面，viewpager设置两遍childView，再包装边界页面
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private void initViewPagerChildView() {
         viewList.clear();
         for (int i = 0; i < (imgResources.length * 2) + 2; i++) {
-            ImageView view = new ImageView(MainActivity.this);
+            ImageView view = new ImageView(TestVpActivity.this);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             if (i == 0) {
                 //第一个位置显示最后一张图片
@@ -81,6 +86,19 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             viewList.add(view);
         }
     }
+
+
+    private void setViewpagerMargin() {
+
+        WindowManager wm = this.getWindowManager();
+        int width = wm.getDefaultDisplay().getWidth();
+        marginLeft = (width - 20) / 2;
+
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) vp.getLayoutParams();
+        layoutParams.leftMargin = marginLeft;
+        vp.setLayoutParams(layoutParams);
+    }
+
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -106,21 +124,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                     vp.setCurrentItem(imgResources.length, false);
                 }
 
-               /* else if (vp.getCurrentItem() == 2) {
-                    //bug:如果连续滑动2个item，跳过了item为1的时候，就会出现边界
-                    vp.setCurrentItem(imgResources.length + 2, false);
-
-                } else if (vp.getCurrentItem() == 3) {
-                    vp.setCurrentItem(imgResources.length + 3, false);
-
-                } else if (vp.getCurrentItem() == 4) {
-                    vp.setCurrentItem(imgResources.length + 4, false);
-
-                } else if (vp.getCurrentItem() == 5) {
-                    vp.setCurrentItem(imgResources.length, false);
-
-                }*/
-
                 Log.i("MainActivity", "--CurrentItem:" + vp.getCurrentItem());
                 break;
             case ViewPager.SCROLL_STATE_SETTLING:   //滑动结束
@@ -130,9 +133,20 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                startX = v.getX();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                moveX = v.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
 
-    public void clickEnter(View view) {
-        startActivity(new Intent(MainActivity.this, TestVpActivity.class));
+        }
+        return false;
     }
 
 
@@ -160,6 +174,4 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             container.removeView(viewList.get(position));
         }
     }
-
-
 }

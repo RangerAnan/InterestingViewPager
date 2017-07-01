@@ -25,6 +25,14 @@
     </FrameLayout>
 
 
+    <Button
+        android:onClick="clickEnter"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="100dp"
+        android:text="多item" />
+
+
     <!--测试clipChildren属性:是否限制子view在其范围内-->
     <LinearLayout
         android:layout_width="match_parent"
